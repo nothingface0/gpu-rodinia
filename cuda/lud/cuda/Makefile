@@ -8,7 +8,7 @@ DEFS += \
 NVCCFLAGS += -I../common \
 			 -O3 \
 			 -use_fast_math \
-			 -arch=sm_20 \
+			 -arch=sm_35 \
 			 -lm \
 			 $(SPACE)
 
@@ -29,6 +29,12 @@ OBJS = ../common/common.o lud.o lud_kernel.o
 
 .PHONY: all clean 
 all : $(EXECUTABLE)
+
+test:
+	./lud_cuda -s 128 -v
+
+golden:
+	./lud_cuda -s 128 -v >golden_stdout.txt 2>golden_stderr.txt
 
 .c.o : 
 	$(NVCC) $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<

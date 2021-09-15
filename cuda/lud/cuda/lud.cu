@@ -166,7 +166,7 @@ main ( int argc, char *argv[] )
 
   /* end of timing point */
   stopwatch_stop(&sw);
-  printf("Time consumed(ms): %lf\n", 1000*get_interval_by_sec(&sw));
+  //printf("Time consumed(ms): %lf\n", 1000*get_interval_by_sec(&sw));
 
   cudaFree(d_m);
 

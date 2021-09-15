@@ -8,8 +8,14 @@ SRC = bfs.cu
 
 EXE = bfs.out
 
-release: $(SRC)
-	$(CC) $(SRC) -o $(EXE) -I$(INCLUDE) -I../util -L$(CUDA_LIB_DIR) -DTIMING
+all: $(SRC)
+	$(CC) $(SRC) -o $(EXE) -Xptxas -v -arch=sm_35 -I$(INCLUDE) -I../util -L$(CUDA_LIB_DIR)
+
+test:
+	./bfs.out /home/dsartzet/software/nvbit_release/tools/nvbitfi/logs/input/bfs/graph32k.txt
+
+golden:
+	./bfs.out /home/dsartzet/software/nvbit_release/tools/nvbitfi/logs/input/bfs/graph32k.txt >golden_stdout.txt 2>golden_stderr.txt
 
 clang: $(SRC)
 	clang++ $(SRC) -o $(EXE) -I../util --cuda-gpu-arch=sm_20 \

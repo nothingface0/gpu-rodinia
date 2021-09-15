@@ -21,14 +21,20 @@ ifeq ($(emu),1)
 endif
 
 
-kmeans: cluster.o getopt.o kmeans.o kmeans_clustering.o kmeans_cuda.o rmse.o
+all: cluster.o getopt.o kmeans.o kmeans_clustering.o kmeans_cuda.o rmse.o
 	$(CC) $(CC_FLAGS) cluster.o getopt.o kmeans.o kmeans_clustering.o kmeans_cuda.o rmse.o -o kmeans -L$(CUDA_LIB_DIR) -lcuda -lcudart -lm
+
+test:
+	./kmeans -o -i /home/dsartzet/software/nvbit_release/tools/nvbitfi/logs/input/kmeans/800_34.txt
+
+golden:
+	./kmeans -o -i /home/dsartzet/software/nvbit_release/tools/nvbitfi/logs/input/kmeans/800_34.txt >golden_stdout.txt 2>golden_stderr.txt
 
 %.o: %.[ch]
 	$(CC) $(CC_FLAGS) $< -c
 
 kmeans_cuda.o: kmeans_cuda.cu 
-	$(NVCC) $(NVCC_FLAGS) -c kmeans_cuda.cu
+	$(NVCC) $(NVCC_FLAGS) -arch=sm_35 -c kmeans_cuda.cu
 
 clean:
 	rm -f *.o *~ kmeans kmeans_cuda.linkinfo

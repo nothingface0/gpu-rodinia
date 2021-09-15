@@ -8,8 +8,14 @@ SRC = needle.cu
 
 EXE = needle
 
-release: $(SRC)
-	$(CC) ${KERNEL_DIM} $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+all: $(SRC)
+	$(CC) ${KERNEL_DIM} $(SRC) -Xptxas -v -arch=sm_35 -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR)
+
+test:
+	./needle 288 10
+
+golden:
+	./needle 288 10 >golden_stdout.txt 2>golden_stderr.txt
 
 clang: $(SRC)
 	clang++ $(SRC) -o $(EXE) -I../util --cuda-gpu-arch=sm_20 \

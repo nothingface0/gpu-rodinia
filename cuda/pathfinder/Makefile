@@ -7,8 +7,14 @@ SRC = pathfinder.cu
 
 EXE = pathfinder
 
-release:
-	$(CC) $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+all:
+	$(CC) $(SRC) -Xptxas -v -arch=sm_35 -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR)
+
+test:
+	./pathfinder 10000 100 20
+
+golden:
+	./pathfinder 10000 100 20 >golden_stdout.txt 2>golden_stderr.txt
 
 clang: $(SRC)
 	clang++ $(SRC) -o $(EXE) -I../util --cuda-gpu-arch=sm_20 \
