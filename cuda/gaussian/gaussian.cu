@@ -164,8 +164,8 @@ int main(int argc, char *argv[])
 	      printf("Read file from %s \n", argv[i]);
 	      InitProblemOnce(argv[i]);
               break;
-            case 'q': // quiet
-	      verbose = 0;
+            case 'v': // quiet
+	      verbose = 1;
               break;
 	  }
       }
@@ -200,8 +200,8 @@ int main(int argc, char *argv[])
         printf("The final solution is: \n");
         PrintAry(finalVec,Size);
     }
-    printf("\nTime total (including memory transfers)\t%f sec\n", time_total * 1e-6);
-    printf("Time for CUDA kernels:\t%f sec\n",totalKernelTime * 1e-6);
+    // printf("\nTime total (including memory transfers)\t%f sec\n", time_total * 1e-6);
+    // printf("Time for CUDA kernels:\t%f sec\n",totalKernelTime * 1e-6);
     
     /*printf("%d,%d\n",size,time_total);
     fprintf(stderr,"%d,%d\n",size,time_total);*/

@@ -14,11 +14,11 @@ INCLUDE := $(CUDA_DIR)/include
 	# command n
 
 # link objects(binaries) together
-a.out:		main.o
+all:		main.o
 	$(CC)	main.o \
 				-I$(INCLUDE) \
 				-L$(CUDA_LIB_DIR)  \
-				-lm -lcuda -lcudart -o srad
+				-lm -lcuda -lcudart -Xptxas -v -arch=sm_35 -o srad
 
 # compile main function file into object (binary)
 main.o: 	main.cu \
@@ -32,6 +32,12 @@ main.o: 	main.cu \
 				compress_kernel.cu
 	nvcc	main.cu \
 				-c -O3 -arch sm_35
+
+test:
+	./srad 2 0.5 128 128
+
+golden:
+	./srad 2 0.5 128 128 >golden_stdout.txt 2>golden_stderr.txt
 
 # delete all object files
 clean:
