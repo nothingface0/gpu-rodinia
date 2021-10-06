@@ -245,7 +245,7 @@ void BFSGraph( int argc, char** argv)
 	while(stop);
 
 
-	printf("Kernel Executed %d times\n",k);
+	// printf("Kernel Executed %d times\n",k);
 
 	// copy result from device to host
 #ifdef  TIMING
@@ -258,12 +258,44 @@ void BFSGraph( int argc, char** argv)
 	d2h_time += tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
 #endif
 
-	//Store the result into a file
-	FILE *fpo = fopen("result.txt","w");
-	for(int i=0;i<no_of_nodes;i++)
-		fprintf(fpo,"%d) cost:%d\n",i,h_cost[i]);
+//Store the result into a file
+  FILE *fpo = fopen("result.txt","r");
+  char * line = NULL;
+  char res[1000];
+  bool error = false;
+  size_t len = 0;
+  ssize_t read;
+
+	for(int i=0;i<no_of_nodes;i++) {
+    sprintf(res,"%d) cost:%d\n",i,h_cost[i]);
+    if ((read = getline(&line, &len, fpo)) != -1) {
+      if (strcmp(res, line) == 0) {
+        if (line) {
+          free(line);
+          line = NULL;
+        }
+
+      } else {
+        error = true;
+        break;
+      }
+    } else {
+      error = true;
+      break;
+    }
+  }
 	fclose(fpo);
-	printf("Result stored in result.txt\n");
+  if (line) {
+    free(line);
+    line = NULL;
+  }
+	// printf("Result stored in result.txt\n");
+
+  if (error) {
+    printf("Test FAILED\n");
+  } else {
+    printf("Test PASSED\n");
+  }
 
 
 	// cleanup memory

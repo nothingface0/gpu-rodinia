@@ -86,11 +86,13 @@ void usage(int argc, char **argv)
 
 void runTest( int argc, char** argv) 
 {
-    int max_rows, max_cols, penalty;
-    int *input_itemsets, *output_itemsets, *referrence;
+  const char *results = "print traceback value GPU:\n\
+2 12 6 8 18 12 15 7 7 2 -7 -8 2 -7 -9 -9 1 -5 -13 -13 -22 -12 -18 -15 -12 -20 -20 -18 -20 -16 -14 -11 -8 -13 -12 -20 -20 -16 -16 -12 -8 -4 -6 -4 -13 -13 -13 -3 -8 -14 -23 -27 -26 -26 -23 -19 -18 -27 -17 -25 -24 -33 -37 -27 -17 -23 -21 -23 -27 -24 -21 -23 -20 -20 -18 -14 -19 -16 -13 -12 -9 -15 -13 -22 -22 -22 -22 -19 -17 -17 -13 -13 -21 -20 -20 -20 -25 -25 -22 -19 -21 -25 -34 -43 -40 -42 -40 -36 -44 -42 -43 -43 -43 -40 -38 -37 -34 -39 -36 -37 -43 -43 -48 -48 -47 -45 -50 -49 -46 -43 -41 -38 -35 -33 -41 -40 -30 -28 -34 -31 -31 -40 -37 -33 -39 -38 -37 -35 -36 -42 -42 -42 -40 -37 -37 -37 -34 -31 -33 -29 -38 -43 -43 -48 -50 -47 -46 -46 -46 -50 -48 -46 -51 -51 -49 -47 -51 -51 -48 -50 -50 -46 -48 -44 -46 -45 -54 -51 -47 -49 -48 -45 -44 -45 -45 -41 -38 -43 -43 -42 -41 -31 -32 -29 -26 -26 -31 -28 -24 -23 -20 -26 -24 -29 -19 -28 -30 -30 -28 -27 -26 -26 -25 -33 -30 -39 -29 -31 -22 -22 -21 -21 -17 -18 -15 -12 -16 -13 -17 -17 -15 -11 -11 -11 -16 -13 -11 -11 -20 -26 -28 -28 -26 -26 -30 -30 -34 -34 -34 -31 -21 -23 -31 -31 -30 -28 -28 -26 -25 -25 -33 -34 -34 -39 -35 -33 -37 -34 -35 -33 -30 -29 -33 -23 -28 -24 -14 -14 -19 -9 -7 -15 -11 -8 -13 -19 -9 1 0 ";
+
+  int max_rows, max_cols, penalty;
+  int *input_itemsets, *output_itemsets, *referrence;
 	int *matrix_cuda,  *referrence_cuda;
 	int size;
-	
     
     // the lengths of the two sequences should be able to divided by 16.
 	// And at current stage  max_rows needs to equal max_cols
@@ -190,17 +192,22 @@ void runTest( int argc, char** argv)
 #endif
 
     cudaMemcpy(output_itemsets, matrix_cuda, sizeof(int) * size, cudaMemcpyDeviceToHost);
-	
-//#define TRACEBACK
+
+#define TRACEBACK
 #ifdef TRACEBACK
-	
-	FILE *fpo = fopen("result.txt","w");
-	fprintf(fpo, "print traceback value GPU:\n");
-    
+
+	// FILE *fpo = fopen("result.txt","w");
+	// fprintf(fpo, "print traceback value GPU:\n");
+  char *str_result = new char[(sizeof(char) * (strlen(results)+1))];
+  str_result[0] = 0;
+
+  sprintf(str_result + strlen(str_result), "print traceback value GPU:\n");
+
 	for (int i = max_rows - 2,  j = max_rows - 2; i>=0, j>=0;){
 		int nw, n, w, traceback;
 		if ( i == max_rows - 2 && j == max_rows - 2 )
-			fprintf(fpo, "%d ", output_itemsets[ i * max_cols + j]); //print the first element
+			// fprintf(fpo, "%d ", output_itemsets[ i * max_cols + j]); //print the first element
+      sprintf(str_result + strlen(str_result), "%d ", output_itemsets[ i * max_cols + j]);
 		if ( i == 0 && j == 0 )
            break;
 		if ( i > 0 && j > 0 ){
@@ -232,8 +239,8 @@ void runTest( int argc, char** argv)
 			traceback = w;
 		if(traceback == new_n)
             traceback = n;
-			
-		fprintf(fpo, "%d ", traceback);
+		// fprintf(fpo, "%d ", traceback);
+    sprintf(str_result + strlen(str_result), "%d ", traceback);
 
 		if(traceback == nw )
 		{i--; j--; continue;}
@@ -247,8 +254,15 @@ void runTest( int argc, char** argv)
 		else
 		;
 	}
-	
-	fclose(fpo);
+
+  if (strcmp(results, str_result) == 0) {
+      printf("Test PASSED\n");
+    } else {
+      printf("Test FAILED\n");
+    }
+
+	// fclose(fpo);
+  delete str_result;
 
 #endif
 
@@ -263,4 +277,3 @@ void runTest( int argc, char** argv)
     printf("Exec: %f\n", kernel_time);
 #endif
 }
-

@@ -57,7 +57,7 @@ float init_time = 0, mem_alloc_time = 0, h2d_time = 0, kernel_time = 0,
 #endif
 
 int Size;
-float *a, *b, *finalVec;
+float *a, *b, *solution, *finalVec;
 float *m;
 
 FILE *fp;
@@ -200,6 +200,24 @@ int main(int argc, char *argv[])
         printf("The final solution is: \n");
         PrintAry(finalVec,Size);
     }
+
+    bool error = false;
+    for (int i=0; i<Size; i++) {
+      if (fabs(finalVec[i] - solution[i]) > 1e-2) {
+        printf("finalVec[%d]=%f != solution[%d]=%f\n", i, finalVec[i], i, solution[i]);
+        error = true;
+        break;
+      } else {
+        // printf("finalVec[%d]=%f == solution[%d]=%f\n", i, finalVec[i], i, solution[i]);
+      }
+    }
+
+    if (error == false) {
+      printf("Test PASSED");
+    } else {
+      printf("Test FAILED");
+    }
+
     printf("\nTime total (including memory transfers)\t%f sec\n", time_total * 1e-6);
     printf("Time for CUDA kernels:\t%f sec\n",totalKernelTime * 1e-6);
     
@@ -209,6 +227,7 @@ int main(int argc, char *argv[])
     free(m);
     free(a);
     free(b);
+    free(solution);
 
 #ifdef  TIMING
 	printf("Exec: %f\n", kernel_time);
@@ -282,7 +301,8 @@ void InitProblemOnce(char *filename)
 	InitAry(b, Size);
 	//printf("The input array b is:\n");
 	//PrintAry(b, Size);
-		
+  solution = (float *) malloc(Size * sizeof(float));
+  InitAry(solution, Size);
 	 m = (float *) malloc(Size * Size * sizeof(float));
 }
 
@@ -496,4 +516,3 @@ void checkCUDAError(const char *msg)
         exit(EXIT_FAILURE);
     }                         
 }
-

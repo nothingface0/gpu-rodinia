@@ -52,21 +52,36 @@ void writeoutput(float *vect, int grid_rows, int grid_cols, char *file){
 	int i,j, index=0;
 	FILE *fp;
 	char str[STR_SIZE];
+  char result_str[STR_SIZE];
+  bool error = false;
 
-	if( (fp = fopen(file, "w" )) == 0 )
+	if( (fp = fopen("results.txt", "r" )) == 0 )
           printf( "The file was not opened\n" );
 
 
-	for (i=0; i < grid_rows; i++) 
-	 for (j=0; j < grid_cols; j++)
-	 {
+	for (i=0; i < grid_rows; i++) {
+    for (j=0; j < grid_cols; j++) {
 
-		 sprintf(str, "%d\t%g\n", index, vect[i*grid_cols+j]);
-		 fputs(str,fp);
-		 index++;
-	 }
-		
-      fclose(fp);	
+      sprintf(str, "%d\t%g\n", index, vect[i*grid_cols+j]);
+      fgets(result_str, STR_SIZE, fp);
+
+      if (strcmp(str,result_str) != 0) {
+        error = true;
+        break;
+      }
+      index++;
+    }
+    if (error) {
+      break;
+    }
+  }
+  fclose(fp);
+
+  if (error) {
+    printf("Test FAILED\n");
+  } else {
+    printf("Test PASSED\n");
+  }
 }
 
 
@@ -159,7 +174,7 @@ __global__ void calculate_temp(int iteration,  //number of iteration
         // load data if it is within the valid input range
 	int loadYidx=yidx, loadXidx=xidx;
         int index = grid_cols*loadYidx+loadXidx;
-       
+
 	if(IN_RANGE(loadYidx, 0, grid_rows-1) && IN_RANGE(loadXidx, 0, grid_cols-1)){
             temp_on_cuda[ty][tx] = temp_src[index];  // Load the temperature data from global memory to shared memory
             power_on_cuda[ty][tx] = power[index];// Load the power data from global memory to shared memory

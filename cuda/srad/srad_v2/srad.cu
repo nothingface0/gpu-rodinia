@@ -240,15 +240,45 @@ runTest( int argc, char** argv)
     cudaThreadSynchronize();
 
 #ifdef OUTPUT
-    //Printing output	
-		printf("Printing Output:\n"); 
-    for( int i = 0 ; i < rows ; i++){
-		for ( int j = 0 ; j < cols ; j++){
-         printf("%.5f ", J[i * cols + j]); 
-		}	
-     printf("\n"); 
+    //Printing output
+		FILE *fp;
+		char str[10000];
+		char *result_str = NULL;
+		bool error = false;
+		size_t len = 0;
+
+		if( (fp = fopen("results.txt", "r" )) == 0 )
+				printf( "The file was not opened\n" );
+		// printf("Printing Output:\n");
+    for( int i = 0 ; i < rows ; i++) {
+			str[0] = 0;
+			// result_str[0] = 0;
+			for ( int j = 0 ; j < cols ; j++){
+	         // printf("%.5f ", J[i * cols + j]);
+					 sprintf(str + strlen(str), "%.5f ", J[i * cols + j]);
+			}
+			// printf("\n");
+			sprintf(str + strlen(str), "\n\0");
+			getline(&result_str, &len, fp);
+
+			if (strcmp(str,result_str) != 0) {
+			  error = true;
+			  break;
+			}
+			if (result_str) {
+			 result_str = NULL;
+			 free(result_str);
+			}
    }
-#endif 
+	 if (result_str) free(result_str);
+	 fclose(fp);
+
+	if (error) {
+		printf("Test FAILED\n");
+	} else {
+		printf("Test PASSED\n");
+	}
+#endif
 
 	printf("Computation Done\n");
 
@@ -282,4 +312,3 @@ void random_matrix(float *I, int rows, int cols){
 	}
 
 }
-

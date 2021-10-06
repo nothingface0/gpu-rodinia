@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "common.h"
 
@@ -71,60 +72,6 @@ create_matrix_from_file(float **mp, const char* filename, int *size_p){
 }
 
 
-func_ret_t
-create_matrix_from_random(float **mp, int size){
-  float *l, *u, *m;
-  int i,j,k;
-
-  srand(time(NULL));
-
-  l = (float*)malloc(size*size*sizeof(float));
-  if ( l == NULL)
-    return RET_FAILURE;
-
-  u = (float*)malloc(size*size*sizeof(float));
-  if ( u == NULL) {
-      free(l);
-      return RET_FAILURE;
-  }
-
-  for (i = 0; i < size; i++) {
-      for (j=0; j < size; j++) {
-          if (i>j) {
-              l[i*size+j] = GET_RAND_FP;
-          } else if (i == j) {
-              l[i*size+j] = 1;
-          } else {
-              l[i*size+j] = 0;
-          }
-      }
-  }
-
-  for (j=0; j < size; j++) {
-      for (i=0; i < size; i++) {
-          if (i>j) {
-              u[j*size+i] = 0;
-          }else {
-              u[j*size+i] = GET_RAND_FP; 
-          }
-      }
-  }
-
-  for (i=0; i < size; i++) {
-      for (j=0; j < size; j++) {
-          for (k=0; k <= MIN(i,j); k++)
-            m[i*size+j] = l[i*size+k] * u[j*size+k];
-      }
-  }
-
-  free(l);
-  free(u);
-
-  *mp = m;
-
-  return RET_SUCCESS;
-}
-
 void
 matrix_multiply(float *inputa, float *inputb, float *output, int size){
   int i, j, k;
@@ -140,6 +87,7 @@ func_ret_t
 lud_verify(float *m, float *lu, int matrix_dim){
   int i,j,k;
   float *tmp = (float*)malloc(matrix_dim*matrix_dim*sizeof(float));
+  bool error = false;
 
   for (i=0; i < matrix_dim; i ++)
     for (j=0; j< matrix_dim; j++) {
@@ -179,10 +127,20 @@ lud_verify(float *m, float *lu, int matrix_dim){
 
   for (i=0; i<matrix_dim; i++){
       for (j=0; j<matrix_dim; j++){
-          if ( fabs(m[i*matrix_dim+j]-tmp[i*matrix_dim+j]) > 0.0001)
+          if ( fabs(m[i*matrix_dim+j]-tmp[i*matrix_dim+j]) > 0.0001) {
             printf("dismatch at (%d, %d): (o)%f (n)%f\n", i, j, m[i*matrix_dim+j], tmp[i*matrix_dim+j]);
+            error = true;
+            break;
+          }
       }
+      if (error == true)
+        break;
   }
+
+  if (error == true)
+    printf("Test FAILED\n");
+  else
+    printf("Test PASSED\n");
   free(tmp);
 }
 

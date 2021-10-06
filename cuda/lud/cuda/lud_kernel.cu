@@ -204,4 +204,3 @@ void lud_cuda(float *m, int matrix_dim)
   }
   lud_diagonal<<<1,BLOCK_SIZE>>>(m, matrix_dim, i);
 }
-

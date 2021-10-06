@@ -127,6 +127,17 @@ int setup(int argc, char **argv) {
 		int		isOutput = 0;
 		//float	cluster_timing, io_timing;		
 
+    char *results = "0: 140.45 134.60 120.53 101.62 144.25 118.62 102.42 94.80 113.94 138.95 143.07 145.97 149.62 124.89 151.08 132.04 124.40 173.02 130.36 141.38 111.53 137.85 134.12 150.70 93.41 138.47 116.49 122.45 140.81 103.86 127.38 148.80 143.87 116.78\
+\n\n\
+1: 88.38 89.17 117.35 168.93 95.18 123.13 157.62 128.60 139.39 154.31 131.44 115.80 152.69 121.15 128.02 159.34 129.66 121.80 144.83 139.08 150.30 125.04 151.74 99.82 123.81 118.54 149.97 146.47 111.13 102.10 137.84 82.87 134.99 134.47\
+\n\n\
+2: 135.49 131.12 145.03 156.30 115.21 131.91 107.39 154.18 115.16 114.34 129.65 155.55 130.64 116.66 132.72 97.76 158.18 74.92 143.29 131.84 138.67 107.02 93.58 163.04 124.72 156.50 144.56 142.00 121.47 143.79 133.52 131.60 98.28 142.31\
+\n\n\
+3: 106.16 154.39 128.49 118.84 124.07 146.73 155.51 171.68 147.06 118.55 97.57 126.61 100.50 148.08 99.02 150.76 116.63 137.09 118.96 114.80 142.81 145.32 117.87 148.31 145.87 126.89 101.03 89.42 151.22 123.58 100.94 120.66 121.97 132.94\
+\n\n\
+4: 156.86 130.98 121.34 119.50 159.97 105.90 138.13 107.66 119.71 112.10 136.99 87.61 111.50 138.76 117.56 128.19 113.54 101.73 109.10 97.57 109.61 120.52 139.18 97.28 158.07 124.35 128.78 144.82 108.12 162.73 115.67 132.85 123.28 92.64\
+\n\n";
+
 		/* obtain command line arguments and change appropriate options */
 		while ( (opt=getopt(argc,argv,"i:t:m:n:l:bro"))!= EOF) {
         switch (opt) {
@@ -254,17 +265,28 @@ int setup(int argc, char **argv) {
 
 	/* cluster center coordinates
 	   :displayed only for when k=1*/
-	if((min_nclusters == max_nclusters) && (isOutput == 1)) {
+  char *str_result = malloc(sizeof(char) * (strlen(results)+1));
+  str_result[0] = 0;
+	if((min_nclusters == max_nclusters) && (isOutput == 0)) {
 		printf("\n================= Centroid Coordinates =================\n");
 		for(i = 0; i < max_nclusters; i++){
 			printf("%d:", i);
+      sprintf(str_result + strlen(str_result), "%d:", i);
 			for(j = 0; j < nfeatures; j++){
 				printf(" %.2f", cluster_centres[i][j]);
+        sprintf(str_result + strlen(str_result), " %.2f", cluster_centres[i][j]);
 			}
 			printf("\n\n");
+      sprintf(str_result + strlen(str_result), "\n\n");
 		}
 	}
-	
+
+  if (strcmp(results, str_result) == 0) {
+    printf("Test PASSED\n");
+  } else {
+    printf("Test FAILED\n");
+  }
+
 	len = (float) ((max_nclusters - min_nclusters + 1)*nloops);
 
 	printf("Number of Iteration: %d\n", nloops);
@@ -302,4 +324,3 @@ int setup(int argc, char **argv) {
 	free(features);    
     return(0);
 }
-

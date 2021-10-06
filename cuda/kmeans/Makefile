@@ -27,7 +27,10 @@ kmeans: cluster.o getopt.o kmeans.o kmeans_clustering.o kmeans_cuda.o rmse.o
 %.o: %.[ch]
 	$(CC) $(CC_FLAGS) $< -c
 
-kmeans_cuda.o: kmeans_cuda.cu 
+kmeans.o: kmeans.c
+	$(CC) $(CC_FLAGS) -c kmeans.c
+
+kmeans_cuda.o: kmeans_cuda.cu
 	$(NVCC) $(NVCC_FLAGS) -c kmeans_cuda.cu
 
 clean:

@@ -98,14 +98,7 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
   cudaMalloc((void**) &output_hidden_cuda, (hid + 1) * sizeof(float));
   cudaMalloc((void**) &input_hidden_cuda, (in + 1) * (hid + 1) * sizeof(float));
   cudaMalloc((void**) &hidden_partial_sum, num_blocks * WIDTH * sizeof(float));
-  
-  
-#endif
 
-#ifdef CPU
-
-  printf("Performing CPU computation\n");
-  bpnn_layerforward(net->input_units, net->hidden_units,net->input_weights, in, hid);
 
 #endif
 
@@ -152,13 +145,6 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
   bpnn_hidden_error(net->hidden_delta, hid, net->output_delta, out, net->hidden_weights, net->hidden_units, &hid_err);  
   bpnn_adjust_weights(net->output_delta, out, net->hidden_units, hid, net->hidden_weights, net->hidden_prev_weights);
 
-#ifdef CPU
-
-  bpnn_adjust_weights(net->hidden_delta, hid, net->input_units, in, net->input_weights, net->input_prev_weights);
-
-#endif  
-
-
 #ifdef GPU
 
   cudaMalloc((void**) &hidden_delta_cuda, (hid + 1) * sizeof(float));
@@ -180,6 +166,15 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
   cudaMemcpy(net->input_units, input_cuda, (in + 1) * sizeof(float), cudaMemcpyDeviceToHost);
   cudaMemcpy(input_weights_one_dim, input_hidden_cuda, (in + 1) * (hid + 1) * sizeof(float), cudaMemcpyDeviceToHost);
     
+  m = 0;
+  for (int k = 0; k <= in; k++) {
+   for (int j = 0; j <= hid; j++) {
+      net->input_weights[k][j] = input_weights_one_dim[m];
+      net->input_prev_weights[k][j] = input_weights_prev_one_dim[m];
+      m++;
+    }
+  }
+
   cudaFree(input_cuda);
   cudaFree(output_hidden_cuda);
   cudaFree(input_hidden_cuda);
@@ -192,8 +187,34 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
   free(input_weights_prev_one_dim);
 
 #endif   
+}
   
   
-  
+extern "C"
+void bpnn_train_cuda_CPU(BPNN *net, float *eo, float *eh)
+{
+  int in, hid, out;
+  float out_err, hid_err;
 
+  in = net->input_n;
+  hid = net->hidden_n;
+  out = net->output_n;
+
+#ifdef CPU
+
+  printf("Performing CPU computation\n");
+  bpnn_layerforward(net->input_units, net->hidden_units,net->input_weights, in, hid);
+
+#endif
+
+  bpnn_layerforward(net->hidden_units, net->output_units, net->hidden_weights, hid, out);
+  bpnn_output_error(net->output_delta, net->target, net->output_units, out, &out_err);
+  bpnn_hidden_error(net->hidden_delta, hid, net->output_delta, out, net->hidden_weights, net->hidden_units, &hid_err);
+  bpnn_adjust_weights(net->output_delta, out, net->hidden_units, hid, net->hidden_weights, net->hidden_prev_weights);
+
+#ifdef CPU
+
+  bpnn_adjust_weights(net->hidden_delta, hid, net->input_units, in, net->input_weights, net->input_prev_weights);
+
+#endif
 }

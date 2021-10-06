@@ -9,10 +9,10 @@ SRC = bfs.cu
 EXE = bfs.out
 
 release: $(SRC)
-	$(CC) $(SRC) -o $(EXE) -I$(INCLUDE) -I../util -L$(CUDA_LIB_DIR) -DTIMING
+	$(CC) $(SRC) -o $(EXE) -I$(INCLUDE) -I../util -L$(CUDA_LIB_DIR)
 
 clang: $(SRC)
-	clang++ $(SRC) -o $(EXE) -I../util --cuda-gpu-arch=sm_20 \
+	clang++ $(SRC) -o $(EXE) -I../util --cuda-gpu-arch=sm_10 \
 		-L/usr/local/cuda/lib64 -lcudart_static -ldl -lrt -pthread -DTIMING
 
 enum: $(SRC)

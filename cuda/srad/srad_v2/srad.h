@@ -11,6 +11,5 @@
 #endif
 
 #define GPU
-#define TIMER
-//#define OUTPUT
-
+// #define TIMER
+#define OUTPUT

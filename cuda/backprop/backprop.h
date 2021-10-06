@@ -4,6 +4,7 @@
 #define BIGRND 0x7fffffff
 
 #define GPU
+#define CPU
 #define THREADS 256
 #define WIDTH 16  // shared memory width  
 #define HEIGHT 16 // shared memory height
