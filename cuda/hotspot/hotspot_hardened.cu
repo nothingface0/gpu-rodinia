@@ -203,20 +203,26 @@ __global__ void calculate_temp(int iteration,  //number of iteration
         		*/
 
         		/* compute 3 times */
-        		  float rep_1 =   temp_on_cuda[ty][tx] + step_div_Cap * (power_on_cuda[ty][tx] + 
-        	       	         (temp_on_cuda[S][tx] + temp_on_cuda[N][tx] - 2.0*temp_on_cuda[ty][tx]) * Ry_1 + 
-        		             (temp_on_cuda[ty][E] + temp_on_cuda[ty][W] - 2.0*temp_on_cuda[ty][tx]) * Rx_1 + 
-        		             (amb_temp - temp_on_cuda[ty][tx]) * Rz_1);
-          	  float rep_2 =   temp_on_cuda[ty][tx] + step_div_Cap * (power_on_cuda[ty][tx] + 
-        	       	         (temp_on_cuda[S][tx] + temp_on_cuda[N][tx] - 2.0*temp_on_cuda[ty][tx]) * Ry_1 + 
-        		             (temp_on_cuda[ty][E] + temp_on_cuda[ty][W] - 2.0*temp_on_cuda[ty][tx]) * Rx_1 + 
-        		             (amb_temp - temp_on_cuda[ty][tx]) * Rz_1);
+                float rep_1, rep_2, rep_3;
+                if (Cap) {
+                    rep_1 = temp_on_cuda[ty][tx] + step_div_Cap * (power_on_cuda[ty][tx] +
+                        (temp_on_cuda[S][tx] + temp_on_cuda[N][tx] - 2.0*temp_on_cuda[ty][tx]) * Ry_1 +
+                        (temp_on_cuda[ty][E] + temp_on_cuda[ty][W] - 2.0*temp_on_cuda[ty][tx]) * Rx_1 +
+                        (amb_temp - temp_on_cuda[ty][tx]) * Rz_1);
+                }
+                if (Cap+1.0) {
+                    rep_2 = temp_on_cuda[ty][tx] + step_div_Cap * (power_on_cuda[ty][tx] +
+                        (temp_on_cuda[S][tx] + temp_on_cuda[N][tx] - 2.0*temp_on_cuda[ty][tx]) * Ry_1 +
+                        (temp_on_cuda[ty][E] + temp_on_cuda[ty][W] - 2.0*temp_on_cuda[ty][tx]) * Rx_1 +
+                        (amb_temp - temp_on_cuda[ty][tx]) * Rz_1);
+                }
+                if (Cap+2.0) {
+                    rep_3 = temp_on_cuda[ty][tx] + step_div_Cap * (power_on_cuda[ty][tx] +
+                        (temp_on_cuda[S][tx] + temp_on_cuda[N][tx] - 2.0*temp_on_cuda[ty][tx]) * Ry_1 +
+                        (temp_on_cuda[ty][E] + temp_on_cuda[ty][W] - 2.0*temp_on_cuda[ty][tx]) * Rx_1 +
+                        (amb_temp - temp_on_cuda[ty][tx]) * Rz_1);
+                }
 
-              float rep_3 =   temp_on_cuda[ty][tx] + step_div_Cap * (power_on_cuda[ty][tx] + 
-        	       	         (temp_on_cuda[S][tx] + temp_on_cuda[N][tx] - 2.0*temp_on_cuda[ty][tx]) * Ry_1 + 
-        		             (temp_on_cuda[ty][E] + temp_on_cuda[ty][W] - 2.0*temp_on_cuda[ty][tx]) * Rx_1 + 
-        		             (amb_temp - temp_on_cuda[ty][tx]) * Rz_1);
-        	
         		  /* if the first two does not match, then we return the third one. 
         		     We should use majority vote, but since here we assume only one fault, 
         		     then we could get 1 wrong output or 0 wrong output.
