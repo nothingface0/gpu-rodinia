@@ -55,19 +55,42 @@ __global__ void vectorAdd(const float *A, const float *B, float *C,
   int cur_copy = threadIdx.x / 256; // added by Lishan
 
   if (i < numElements) {
-    C[i+cur_copy*numElements] = A[i] + B[i] + 0.0f; // modified by Lishan.
+    C[i+cur_copy*1049087] = A[i] + B[i] + 0.0f; // modified by Lishan.
     // C[i] = A[i] + B[i] + 0.0f; // original code
 
-   /* START of Lishan add */
+   /* START of Lishan add, checking code in the same kernel *
    if (cur_copy == 0)
    {
 	// make sure copy 0 is always correct
-      if (C[i] != C[i+numElements])
-        C[i] = C[i+numElements*2];
+      if (C[i] != C[i+1049087])
+        C[i] = C[i+1049087*2];
    }
-   /* END of Lishan add */
+   * END of Lishan add */
   }
 }
+
+/* START of Lishan add */
+__global__ void check_correctness(float* result, int size)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+    if (tid >= size*3) return;
+	
+    if (result[tid] != result[tid+size])
+    {
+	if (result[tid] != result[tid+size*2] && result[tid+size]!= result[tid+size*2])
+	{ 
+	    printf ("DUE %f %f %f\n", result[tid], result[tid+size], result[tid+size*2]);  
+	    // All three copies have different results. This is considered as DUE, not SDC.
+	}
+	else
+	{
+	    //printf ("correcting tid=%d %.10f %.10f %.10f\n", tid,result[tid], result[tid+size], result[tid+size*2]);  
+	    result[tid] = result[tid+size*2];
+	}
+    }   
+}
+/* END of Lishan add */
 
 /**
  * Host main routine
@@ -162,6 +185,15 @@ int main(void) {
   printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid,
          threadsPerBlock);
   vectorAdd<<<blocksPerGrid, threadsPerBlock*3>>>(d_A, d_B, d_C, numElements); // modified by Lishan
+
+ 
+  /* START of Lishan adding */
+  dim3 dimBlockHardening(256); // added by Lishan
+  dim3 dimGridHardening(numElements/256); // added by Lishan
+   
+  check_correctness<<<dimGridHardening, dimBlockHardening>>>(d_C, numElements);	
+  /* END of Lishan adding */
+
   err = cudaGetLastError();
 
   if (err != cudaSuccess) {
@@ -173,8 +205,7 @@ int main(void) {
   // Copy the device result vector in device memory to the host result vector
   // in host memory.
   printf("Copy output data from the CUDA device to the host memory\n");
-  err = cudaMemcpy(h_C, d_C, size*3, cudaMemcpyDeviceToHost); // modified by Lishan
-  // err = cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost); // original code
+  err = cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
 
   if (err != cudaSuccess) {
     fprintf(stderr,
