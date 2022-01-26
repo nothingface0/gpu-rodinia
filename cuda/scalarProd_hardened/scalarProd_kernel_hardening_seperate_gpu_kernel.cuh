@@ -25,9 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cooperative_groups.h>
+// #include <cooperative_groups.h> // Dim
 
-namespace cg = cooperative_groups;
+// namespace cg = cooperative_groups; // Dim
 
 ///////////////////////////////////////////////////////////////////////////////
 // On G80-class hardware 24-bit multiplication takes 4 clocks per warp
@@ -50,7 +50,7 @@ namespace cg = cooperative_groups;
 __global__ void scalarProdGPU(float *d_C, float *d_A, float *d_B, int vectorN,
                               int elementN) {
   // Handle to thread block group
-  cg::thread_block cta = cg::this_thread_block();
+  // cg::thread_block cta = cg::this_thread_block(); // Dim
   // Accumulators cache
   __shared__ float accumResult[ACCUM_N];
 
@@ -83,13 +83,15 @@ __global__ void scalarProdGPU(float *d_C, float *d_A, float *d_B, int vectorN,
     // ACCUM_N has to be power of two at this stage
     ////////////////////////////////////////////////////////////////////////
     for (int stride = ACCUM_N / 2; stride > 0; stride >>= 1) {
-      cg::sync(cta);
+      // cg::sync(cta); // Dim
+      __syncthreads(); // Dim
 
       for (int iAccum = threadIdx.x; iAccum < stride; iAccum += blockDim.x)
         accumResult[iAccum] += accumResult[stride + iAccum];
     }
 
-    cg::sync(cta);
+    // cg::sync(cta); // Dim
+    __syncthreads(); // Dim
 
     if (threadIdx.x == 0) 
     {
