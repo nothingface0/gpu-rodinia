@@ -6,7 +6,7 @@ INCLUDE := $(CUDA_DIR)/include
 
 SRC = bfs.cu
 
-EXE = bfs.out
+EXE = bfs
 
 release: $(SRC)
 	$(CC) $(SRC) -o $(EXE) -I$(INCLUDE) -I../util -L$(CUDA_LIB_DIR)
@@ -16,13 +16,13 @@ clang: $(SRC)
 		-L/usr/local/cuda/lib64 -lcudart_static -ldl -lrt -pthread -DTIMING
 
 enum: $(SRC)
-	$(CC) -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+	$(CC) -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) -lcudart -arch sm_13
 
 debug: $(SRC)
-	$(CC) -g $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+	$(CC) -g $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) -lcudart -arch sm_13
 
 debugenum: $(SRC)
-	$(CC) -g -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+	$(CC) -g -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) -lcudart -arch sm_13
 
 clean: $(SRC)
 	rm -f $(EXE) $(EXE).linkinfo result.txt
