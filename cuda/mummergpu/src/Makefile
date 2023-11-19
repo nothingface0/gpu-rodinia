@@ -8,9 +8,9 @@ include ../experiments/test_rule.mk
 CUDA_INSTALL_PATH := $(CUDA_DIR)
 
 # Compilers
-NVCC       := $(CUDA_INSTALL_PATH)/bin/nvcc 
+NVCC       := $(CUDA_INSTALL_PATH)/bin/nvcc
 CXX        := g++ -fopenmp $(PROFILE)
-CC         := gcc 
+CC         := gcc
 LINK       := g++ -fopenmp -m64 -fPIC $(PROFILE)
 
 # Add source files here
@@ -27,7 +27,7 @@ CCFILES		:= \
 
 # Basic directory setup for SDK
 # (override directories only if they are not already defined)
-SRCDIR     ?= 
+SRCDIR     ?=
 ROOTDIR    ?= ..
 ROOTBINDIR ?= $(ROOTDIR)/bin
 BINDIR     ?= $(ROOTBINDIR)
@@ -35,10 +35,10 @@ ROOTOBJDIR ?= obj
 LIBDIR     := $(ROOTDIR)/lib
 BINNAME    ?= mummergpu
 # Includes
-INCLUDES  += -I. -I$(CUDA_INSTALL_PATH)/include 
+INCLUDES  += -I. -I$(CUDA_INSTALL_PATH)/include
 
 # Libs
-LIB       := -L$(CUDA_LIB_DIR) -L$(LIBDIR) -lcuda -lcudart -lGL -lGLU ${LIB}
+LIB       := -L$(CUDA_LIB_DIR) -L$(LIBDIR) -lcudart -lGL -lGLU ${LIB}
 
 # Warning flags
 CXXWARN_FLAGS := \
@@ -64,12 +64,12 @@ CWARN_FLAGS := $(CXXWARN_FLAGS) \
 	-Wmain \
 
 # Compiler-specific flags
-NVCCFLAGS := -Xcompiler "-m64"
+NVCCFLAGS := -Xcompiler "-m64" -arch sm_13
 CXXFLAGS  := -m64 $(CXXWARN_FLAGS)
 CFLAGS    := -m64 $(CWARN_FLAGS)
 
 # Common flags
-COMMONFLAGS ?= 
+COMMONFLAGS ?=
 COMMONFLAGS += $(INCLUDES) -DUNIX
 
 # Debug/release configuration
@@ -78,7 +78,7 @@ ifeq ($(dbg),1)
 	NVCCFLAGS   += -D_DEBUG
 	BINSUBDIR   := debug
 	LIBSUFFIX   := D
-else 
+else
 	COMMONFLAGS += -O3
 	BINSUBDIR   := release
 	LIBSUFFIX   :=
@@ -87,7 +87,7 @@ endif
 # Device emulation configuration
 ifeq ($(emu), 1)
 	NVCCFLAGS   += -deviceemu
-	CUDACCFLAGS += 
+	CUDACCFLAGS +=
 	BINSUBDIR   := emu$(BINSUBDIR)
 endif
 
@@ -143,8 +143,8 @@ BINOBJS= \
     $(OBJDIR)/mummergpu_main.cpp_o
 
 $(BINDIR)/mummergpu: makedirectories $(LIBDIR)/libmummergpu$(LIBSUFFIX).a $(BINOBJS)
-	$(LINK) -o $(BINDIR)/$(BINNAME)  $(BINOBJS) -lmummergpu$(LIBSUFFIX) $(LIB) 
-		
+	$(LINK) -o $(BINDIR)/$(BINNAME)  $(BINOBJS) -lmummergpu$(LIBSUFFIX) $(LIB)
+
 
 ##############################################################################
 #                               Auto Generated rules go here                 #
@@ -157,7 +157,7 @@ include ../experiments/rules.mk
 ##############################################################################
 
 
-clean: 
+clean:
 	rm -f $(LIBOBJS)
 	rm -f $(LIBDIR)/libmummergpu$(LIBSUFFIX).a
 	rm -f $(BINOBJS)

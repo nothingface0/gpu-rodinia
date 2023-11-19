@@ -8,6 +8,7 @@ DEFS += \
 NVCCFLAGS += -I../common \
 			 -O3 \
 			 -use_fast_math \
+			-arch sm_13 \
 			 -lm \
 			 $(SPACE)
 
@@ -26,18 +27,18 @@ CCFILES     := lud.c lud_cuda.c ../common/common.c
 
 OBJS = ../common/common.o lud.o lud_kernel.o
 
-.PHONY: all clean 
+.PHONY: all clean
 all : $(EXECUTABLE)
 
-.c.o : 
+.c.o :
 	$(NVCC) $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<
 
-%.o:	%.cu 
+%.o:	%.cu
 	$(NVCC) $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<
 
 clang: $(SRC)
 	clang++ lud.cu lud_kernel.cu ../common/common.c -o $(EXECUTABLE) \
-		-I../common -I../../util --cuda-gpu-arch=sm_20 \
+		-I../common -I../../util --cuda-gpu-arch=sm_13 \
 		-L/usr/local/cuda/lib64 -lcudart_static -ldl -lrt -pthread -DTIMING
 
 $(EXECUTABLE) : $(OBJS)
