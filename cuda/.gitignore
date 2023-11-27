@@ -1,7 +1,13 @@
 *
-!kmeans/gpufi_campaign_config.sh
-!*.c
-!*.h
-!*.cu
 !.gitignore
+!**/*.sh
+!**/*.c
+!**/*.h
+!**/*.cu
 !Makefile
+!**/README
+!**/COPYING
+!**/run
+!**/*.fa
+!**/*.dat
+!**/*.txt
