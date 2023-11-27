@@ -1,6 +1,7 @@
 *
-!.c
-!.h
-!.cu
+!kmeans/gpufi_campaign_config.sh
+!*.c
+!*.h
+!*.cu
 !.gitignore
 !Makefile
