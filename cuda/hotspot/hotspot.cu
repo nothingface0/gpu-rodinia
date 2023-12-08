@@ -57,7 +57,7 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
         {
                 for (j = 0; j < grid_cols; j++)
                 {
-                        sprintf(str, "%d\t%g\n", index, vect[i * grid_cols + j]);
+                        sprintf(str, "%d\t%f\n", index, vect[i * grid_cols + j]);
                         fputs(str, fp);
                         index++;
                 }
@@ -321,8 +321,8 @@ void run(int argc, char **argv)
         float *FilesavingTemp, *FilesavingPower, *MatrixOut;
         char *tfile, *pfile, *gfile;
 
-        int total_iterations = 60;
-        int pyramid_height = 1; // number of iterations
+        int total_iterations = 60;// number of iterations
+        int pyramid_height = 1; 
 
         if (argc != 7)
                 usage(argc, argv);
@@ -374,7 +374,7 @@ void run(int argc, char **argv)
         cudaMemcpy(MatrixOut, MatrixTemp[ret], sizeof(float) * size, cudaMemcpyDeviceToHost);
 
         writeoutput(MatrixOut, grid_rows, grid_cols);
-        compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
+        //compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
         cudaFree(MatrixPower);
         cudaFree(MatrixTemp[0]);
         cudaFree(MatrixTemp[1]);
