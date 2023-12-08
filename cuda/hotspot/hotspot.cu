@@ -63,6 +63,7 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
                         index++;
                 }
         }
+        printf("Wrote %d elements to results file\n", index);
         fclose(fp);
 }
 void compareoutput(float *vect, int grid_rows, int grid_cols, char *gfile)
