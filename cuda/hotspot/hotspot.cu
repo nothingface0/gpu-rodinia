@@ -50,8 +50,7 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
         FILE *fp;
         char str[STR_SIZE];
         char result_str[STR_SIZE];
-        bool error = false;
-        if ((fp = fopen("results.txt", "w")) == 0)
+        if ((fp = fopen("results.txt", "w+")) == 0)
         {
                 printf("The results file could not be created\n");
         }
@@ -62,10 +61,6 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
                         sprintf(str, "%d\t%g\n", index, vect[i * grid_cols + j]);
                         fputs(result_str, fp);
                         index++;
-                }
-                if (error)
-                {
-                        break;
                 }
         }
         fclose(fp);
@@ -378,8 +373,8 @@ void run(int argc, char **argv)
         printf("Ending simulation\n");
         cudaMemcpy(MatrixOut, MatrixTemp[ret], sizeof(float) * size, cudaMemcpyDeviceToHost);
 
-        compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
         writeoutput(MatrixOut, grid_rows, grid_cols);
+        compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
         cudaFree(MatrixPower);
         cudaFree(MatrixTemp[0]);
         cudaFree(MatrixTemp[1]);
