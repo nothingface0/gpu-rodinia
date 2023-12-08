@@ -49,7 +49,6 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
         int i, j, index = 0;
         FILE *fp;
         char str[STR_SIZE];
-        char result_str[STR_SIZE];
         if ((fp = fopen("results.txt", "w+")) == 0)
         {
                 printf("The results file could not be created\n");
@@ -59,7 +58,7 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
                 for (j = 0; j < grid_cols; j++)
                 {
                         sprintf(str, "%d\t%g\n", index, vect[i * grid_cols + j]);
-                        fputs(result_str, fp);
+                        fputs(str, fp);
                         index++;
                 }
         }
