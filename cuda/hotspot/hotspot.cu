@@ -321,7 +321,7 @@ void run(int argc, char **argv)
         float *FilesavingTemp, *FilesavingPower, *MatrixOut;
         char *tfile, *pfile, *gfile;
 
-        int total_iterations = 60;// number of iterations
+        int total_iterations = 60; // number of iterations
         int pyramid_height = 1; 
 
         if (argc != 7)
@@ -346,7 +346,7 @@ void run(int argc, char **argv)
         int smallBlockRow = BLOCK_SIZE - (pyramid_height)*EXPAND_RATE;
         int blockCols = grid_cols / smallBlockCol + ((grid_cols % smallBlockCol == 0) ? 0 : 1);
         int blockRows = grid_rows / smallBlockRow + ((grid_rows % smallBlockRow == 0) ? 0 : 1);
-
+	printf("Border: %d x %d, Small block: %d x %d, Block: %d x %d\n", borderCols, borderRows, smallBlockCol, smallBlockRow, blockCols, blockRows);
         FilesavingTemp = (float *)malloc(size * sizeof(float));
         FilesavingPower = (float *)malloc(size * sizeof(float));
         MatrixOut = (float *)calloc(size, sizeof(float));
