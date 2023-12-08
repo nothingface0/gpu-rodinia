@@ -324,7 +324,7 @@ void run(int argc, char **argv)
         int size;
         int grid_rows, grid_cols;
         float *FilesavingTemp, *FilesavingPower, *MatrixOut;
-        char *tfile, *pfile, *ofile;
+        char *tfile, *pfile, *gfile;
 
         int total_iterations = 60;
         int pyramid_height = 1; // number of iterations
