@@ -43,7 +43,7 @@ void fatal(char *s)
         fprintf(stderr, "error: %s\n", s);
 }
 
-void writeoutput(float *vect, int grid_rows, int grid_cols, char *file)
+void writeoutput(float *vect, int grid_rows, int grid_cols)
 {
 
         int i, j, index = 0;
@@ -51,15 +51,42 @@ void writeoutput(float *vect, int grid_rows, int grid_cols, char *file)
         char str[STR_SIZE];
         char result_str[STR_SIZE];
         bool error = false;
+        if ((fp = fopen("results.txt", "w")) == 0)
+        {
+                printf("The results file could not be created\n");
+        }
+        for (i = 0; i < grid_rows; i++)
+        {
+                for (j = 0; j < grid_cols; j++)
+                {
+                        sprintf(str, "%d\t%g\n", index, vect[i * grid_cols + j]);
+                        fputs(result_str, fp);
+                        index++;
+                }
+                if (error)
+                {
+                        break;
+                }
+        }
+        fclose(fp);
+}
+void compareoutput(float *vect, int grid_rows, int grid_cols, char *gfile)
+{
+        int i, j, index = 0;
+        FILE *fp;
+        char str[STR_SIZE];
+        char result_str[STR_SIZE];
+        bool error = false;
 
-        if ((fp = fopen("results.txt", "r")) == 0)
-                printf("The file was not opened\n");
+        if ((fp = fopen(gfile, "r")) == 0)
+        {
+                printf("The golden file %s could not be opened\n", gfile);
+        }
 
         for (i = 0; i < grid_rows; i++)
         {
                 for (j = 0; j < grid_cols; j++)
                 {
-
                         sprintf(str, "%d\t%g\n", index, vect[i * grid_cols + j]);
                         fgets(result_str, STR_SIZE, fp);
 
@@ -96,7 +123,7 @@ void readinput(float *vect, int grid_rows, int grid_cols, char *file)
         float val;
 
         if ((fp = fopen(file, "r")) == 0)
-                printf("The file was not opened\n");
+                printf("The input file %s could not be opened\n", file);
 
         for (i = 0; i <= grid_rows - 1; i++)
                 for (j = 0; j <= grid_cols - 1; j++)
@@ -279,7 +306,7 @@ void usage(int argc, char **argv)
         fprintf(stderr, "\t<sim_time>   - number of iterations\n");
         fprintf(stderr, "\t<temp_file>  - name of the file containing the initial temperature values of each cell\n");
         fprintf(stderr, "\t<power_file> - name of the file containing the dissipated power values of each cell\n");
-        fprintf(stderr, "\t<output_file> - name of the output file\n");
+        fprintf(stderr, "\t<golden_file> - name of the golden file to verify execution output\n");
         exit(1);
 }
 
@@ -312,7 +339,7 @@ void run(int argc, char **argv)
 
         tfile = argv[4];
         pfile = argv[5];
-        ofile = argv[6];
+        gfile = argv[6];
 
         size = grid_rows * grid_cols;
 
@@ -351,8 +378,8 @@ void run(int argc, char **argv)
         printf("Ending simulation\n");
         cudaMemcpy(MatrixOut, MatrixTemp[ret], sizeof(float) * size, cudaMemcpyDeviceToHost);
 
-        writeoutput(MatrixOut, grid_rows, grid_cols, ofile);
-
+        compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
+        writeoutput(MatrixOut, grid_rows, grid_cols);
         cudaFree(MatrixPower);
         cudaFree(MatrixTemp[0]);
         cudaFree(MatrixTemp[1]);
