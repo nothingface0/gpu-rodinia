@@ -42,7 +42,6 @@ void fatal(char *s)
 {
         fprintf(stderr, "error: %s\n", s);
 }
-
 void writeoutput(float *vect, int grid_rows, int grid_cols)
 {
 
@@ -54,17 +53,17 @@ void writeoutput(float *vect, int grid_rows, int grid_cols)
                 printf("The results file could not be created\n");
         }
         for (i = 0; i < grid_rows; i++)
-        {
                 for (j = 0; j < grid_cols; j++)
                 {
-                        sprintf(str, "%d\t%f\n", index, vect[i * grid_cols + j]);
+
+                        sprintf(str, "%d\t%g\n", index, vect[i * grid_cols + j]);
                         fputs(str, fp);
                         index++;
                 }
-        }
-        printf("Wrote %d elements to results file\n", index);
+
         fclose(fp);
 }
+
 void compareoutput(float *vect, int grid_rows, int grid_cols, char *gfile)
 {
         int i, j, index = 0;
@@ -322,7 +321,7 @@ void run(int argc, char **argv)
         char *tfile, *pfile, *gfile;
 
         int total_iterations = 60; // number of iterations
-        int pyramid_height = 1; 
+        int pyramid_height = 1;
 
         if (argc != 7)
                 usage(argc, argv);
@@ -346,7 +345,7 @@ void run(int argc, char **argv)
         int smallBlockRow = BLOCK_SIZE - (pyramid_height)*EXPAND_RATE;
         int blockCols = grid_cols / smallBlockCol + ((grid_cols % smallBlockCol == 0) ? 0 : 1);
         int blockRows = grid_rows / smallBlockRow + ((grid_rows % smallBlockRow == 0) ? 0 : 1);
-	printf("Border: %d x %d, Small block: %d x %d, Block: %d x %d\n", borderCols, borderRows, smallBlockCol, smallBlockRow, blockCols, blockRows);
+        printf("Border: %d x %d, Small block: %d x %d, Block: %d x %d\n", borderCols, borderRows, smallBlockCol, smallBlockRow, blockCols, blockRows);
         FilesavingTemp = (float *)malloc(size * sizeof(float));
         FilesavingPower = (float *)malloc(size * sizeof(float));
         MatrixOut = (float *)calloc(size, sizeof(float));
@@ -374,7 +373,7 @@ void run(int argc, char **argv)
         cudaMemcpy(MatrixOut, MatrixTemp[ret], sizeof(float) * size, cudaMemcpyDeviceToHost);
 
         writeoutput(MatrixOut, grid_rows, grid_cols);
-        //compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
+        compareoutput(MatrixOut, grid_rows, grid_cols, gfile);
         cudaFree(MatrixPower);
         cudaFree(MatrixTemp[0]);
         cudaFree(MatrixTemp[1]);

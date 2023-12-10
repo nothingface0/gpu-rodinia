@@ -1,0 +1,24 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CUDA C++: Launch hotspot",
+      "type": "cuda-gdb",
+      "request": "launch",
+      "program": "${workspaceFolder}/cuda/hotspot/hotspot",
+      "environment": [{ "PATH": "/usr/local/cuda-4.2/cuda/bin:$PATH" }],
+      "args": "256 2 1 ${workspaceFolder}/data/hotspot/temp_1024 ${workspaceFolder}/data/hotspot/power_1024 ${workspaceFolder}/cuda/hotspot/results.txt",
+      "debuggerPath": "/usr/local/cuda-11.0/bin/cuda-gdb",
+      "breakOnLaunch": true,
+      "stopAtEntry": true
+    },
+    {
+      "name": "CUDA C++: Attach",
+      "type": "cuda-gdb",
+      "request": "attach"
+    }
+  ]
+}
