@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 	{
 		niter = atoi(argv[1]);
 		lambda = atof(argv[2]);
-		Nr = atoi(argv[3]); // it is 502 in the original image
+		Nr = atoi(argv[3]); // it is 5f02 in the original image
 		Nc = atoi(argv[4]); // it is 458 in the original image
 		original_image_filepath = argv[5];
 	}
@@ -449,12 +449,12 @@ int main(int argc, char *argv[])
 	// 	WRITE IMAGE AFTER PROCESSING
 	//================================================================================80
 
-	// write_graphics(	"image_out.pgm",
-	// 				image,
-	// 				Nr,
-	// 				Nc,
-	// 				1,
-	// 				255);
+	write_graphics("image_out.pgm",
+				   image,
+				   Nr,
+				   Nc,
+				   1,
+				   255);
 
 	char *str_result = new char[(sizeof(char) * (strlen(results) + 1))];
 	str_result[0] = 0;
