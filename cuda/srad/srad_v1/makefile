@@ -4,21 +4,12 @@ CC := $(CUDA_DIR)/bin/nvcc
 
 INCLUDE := $(CUDA_DIR)/include
 
-# Example
-# target: dependencies
-	# command 1
-	# command 2
-          # .
-          # .
-          # .
-	# command n
-
 # link objects(binaries) together
 a.out:		main.o
 	$(CC)	main.o \
 				-I$(INCLUDE) \
 				-L$(CUDA_LIB_DIR)  \
-				-lm -lcudart -arch sm_13 -o srad
+				-lm -lcudart -arch sm_10 -o srad
 
 # compile main function file into object (binary)
 main.o: 	main.cu \
@@ -31,7 +22,7 @@ main.o: 	main.cu \
 				srad2_kernel.cu \
 				compress_kernel.cu
 	nvcc	main.cu \
-				-c -O3  -arch sm_13
+				-c -O3  -arch sm_10
 
 # delete all object files
 clean:
