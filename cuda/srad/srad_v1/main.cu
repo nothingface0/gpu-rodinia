@@ -76,7 +76,8 @@ int main(int argc, char *argv[])
 	long image_ori_elem;
 
 	// inputs image, input paramenters
-	fp *image;	// input image
+	fp *image; // input image
+	char *original_image_filepath;
 	int Nr, Nc; // IMAGE nbr of rows/cols/elements
 	long Ne;
 
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
 	// 	GET INPUT PARAMETERS
 	//================================================================================80
 
-	if (argc != 5)
+	if (argc != 6)
 	{
 		printf("ERROR: wrong number of arguments\n");
 		return 0;
@@ -155,6 +156,7 @@ int main(int argc, char *argv[])
 		lambda = atof(argv[2]);
 		Nr = atoi(argv[3]); // it is 502 in the original image
 		Nc = atoi(argv[4]); // it is 458 in the original image
+		original_image_filepath = argv[5];
 	}
 
 	time2 = get_time();
@@ -170,7 +172,7 @@ int main(int argc, char *argv[])
 
 	image_ori = (fp *)malloc(sizeof(fp) * image_ori_elem);
 
-	read_graphics("./image.pgm",
+	read_graphics(original_image_filepath,
 				  image_ori,
 				  image_ori_rows,
 				  image_ori_cols,
