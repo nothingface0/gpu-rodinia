@@ -10,7 +10,7 @@ NVCC_FLAGS = -I$(CUDA_DIR)/include -arch sm_13
 
 # 'make dbg=1' enables NVCC debugging
 ifeq ($(dbg),1)
-	NVCC_FLAGS += -g -O0
+	NVCC_FLAGS += -g -G -O0
 else
 	NVCC_FLAGS += -O2
 endif
