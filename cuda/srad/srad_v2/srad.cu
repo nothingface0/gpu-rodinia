@@ -17,8 +17,9 @@ void usage(int argc, char **argv)
 {
 	fprintf(stderr, "Usage: %s <rows> <cols> <y1> <y2> <x1> <x2> <lamda> <no. of iter>", argv[0]);
 #ifdef COMPARE
-	fprintf(stderr, " <filepath>\n");
+	fprintf(stderr, " <filepath>");
 #endif
+	fprintf(stderr, "\n");
 	fprintf(stderr, "\t<rows>   - number of rows\n");
 	fprintf(stderr, "\t<cols>    - number of cols\n");
 	fprintf(stderr, "\t<y1> 	 - y1 value of the speckle\n");
